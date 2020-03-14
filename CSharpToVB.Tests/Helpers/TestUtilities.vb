@@ -74,7 +74,7 @@ Public Module TestUtilities
             If Directory.Exists(potentialDirectory) Then Return potentialDirectory
         Next
 
-        Return String.Empty
+        Return Nothing
     End Function
 
     <Extension()>
