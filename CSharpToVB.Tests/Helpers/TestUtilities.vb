@@ -12,7 +12,13 @@ Imports Xunit
 
 Public Module TestUtilities
 
-    Private s_roslynRootDirectory As New Lazy(Of String)(AddressOf FindRoslynRootDirectory)
+    Private s_roslynRootDirectory As New Lazy(Of String)(
+        Function()
+            Return {
+                Environment.GetEnvironmentVariable("CSHARPTOVB_TEST_SOURCE_PATH"),
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Source", "Repos", "Roslyn")
+            }.FirstOrDefault(AddressOf Directory.Exists)
+        End Function)
 
     Private Sub GetOccurrenceCount(kind As SyntaxKind, node As SyntaxNodeOrToken,
                                       ByRef actualCount As Integer)
@@ -64,17 +70,6 @@ Public Module TestUtilities
 
     Public Function GetRoslynRootDirectory() As String
         Return s_roslynRootDirectory.Value
-    End Function
-
-    Private Function FindRoslynRootDirectory() As String
-        For Each potentialDirectory As String In {
-            Environment.GetEnvironmentVariable("CSHARPTOVB_TEST_SOURCE_PATH"),
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Source", "Repos", "Roslyn")
-        }
-            If Directory.Exists(potentialDirectory) Then Return potentialDirectory
-        Next
-
-        Return Nothing
     End Function
 
     <Extension()>
