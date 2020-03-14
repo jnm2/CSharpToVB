@@ -67,9 +67,14 @@ Public Module TestUtilities
     End Function
 
     Private Function FindRoslynRootDirectory() As String
-        Dim potentialDirectory As String = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Source", "Repos", "Roslyn")
+        For Each potentialDirectory As String In {
+            Environment.GetEnvironmentVariable("CSHARPTOVB_TEST_SOURCE_PATH"),
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Source", "Repos", "Roslyn")
+        }
+            If Directory.Exists(potentialDirectory) Then Return potentialDirectory
+        Next
 
-        Return If(Directory.Exists(potentialDirectory), potentialDirectory, String.Empty)
+        Return String.Empty
     End Function
 
     <Extension()>
