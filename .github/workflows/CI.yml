@@ -21,7 +21,7 @@ jobs:
       uses: actions/checkout@v2.0.0
       with:
         repository: dotnet/roslyn
-        path: $CSHARPTOVB_TEST_SOURCE_PATH
+        path: ${{ env.CSHARPTOVB_TEST_SOURCE_PATH }}
         clean: false
     
     - name: Build solution and run tests
