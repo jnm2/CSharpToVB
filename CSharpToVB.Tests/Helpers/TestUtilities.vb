@@ -66,9 +66,10 @@ Public Module TestUtilities
     Public Function GetRoslynRootDirectory() As String
         SyncLock s_lockRoslynRootDirectory
             If String.IsNullOrWhiteSpace(s_roslynRootDirectory) Then
-                s_roslynRootDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Source", "Repos", "Roslyn")
-                If Not Directory.Exists(s_roslynRootDirectory) Then
-                    Return ""
+                Dim potentialDirectory As String = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Source", "Repos", "Roslyn")
+
+                If Directory.Exists(s_roslynRootDirectory) Then
+                    s_roslynRootDirectory = potentialDirectory
                 End If
             End If
         End SyncLock
