@@ -5,13 +5,24 @@ on:
     branches: [ master ]
   pull_request:
     branches: [ master ]
+    
+env:
+  CSHARPTOVB_TEST_SOURCE_PATH: ${{ github.workspace }}\TestSourceRoot
 
 jobs:
   build:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - name: CSharpToVB checkout 
+      uses: actions/checkout@v2
 
+    - name: Roslyn checkout
+      uses: actions/checkout@v2.0.0
+      with:
+        repository: dotnet/roslyn
+        path: $CSHARPTOVB_TEST_SOURCE_PATH
+        clean: false
+    
     - name: Build solution and run tests
       run: dotnet test
