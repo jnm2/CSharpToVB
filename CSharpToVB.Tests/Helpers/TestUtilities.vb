@@ -12,8 +12,7 @@ Imports Xunit
 
 Public Module TestUtilities
 
-    Private ReadOnly s_lockRoslynRootDirectory As Object = New Object
-    Private s_roslynRootDirectory As String = String.Empty
+    Private s_roslynRootDirectory As New Lazy(Of String)(AddressOf FindRoslynRootDirectory)
 
     Private Sub GetOccurrenceCount(kind As SyntaxKind, node As SyntaxNodeOrToken,
                                       ByRef actualCount As Integer)
@@ -64,16 +63,13 @@ Public Module TestUtilities
     End Function
 
     Public Function GetRoslynRootDirectory() As String
-        SyncLock s_lockRoslynRootDirectory
-            If String.IsNullOrWhiteSpace(s_roslynRootDirectory) Then
-                Dim potentialDirectory As String = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Source", "Repos", "Roslyn")
+        Return s_roslynRootDirectory.Value
+    End Function
 
-                If Directory.Exists(s_roslynRootDirectory) Then
-                    s_roslynRootDirectory = potentialDirectory
-                End If
-            End If
-        End SyncLock
-        Return s_roslynRootDirectory
+    Private Function FindRoslynRootDirectory() As String
+        Dim potentialDirectory As String = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Source", "Repos", "Roslyn")
+
+        Return If(Directory.Exists(potentialDirectory), potentialDirectory, String.Empty)
     End Function
 
     <Extension()>
